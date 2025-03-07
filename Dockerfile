@@ -1,5 +1,5 @@
 # Use official golang image as builder
-FROM golang:1.23.3-alpine AS builder
+FROM golang:1.23.4-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -16,7 +16,7 @@ COPY . .
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o fabric
 
-# Use scratch as final base image
+# Use alpine as final base image
 FROM alpine:latest
 
 # Copy the binary from builder
@@ -26,16 +26,12 @@ COPY --from=builder /app/fabric /fabric
 COPY patterns /patterns
 
 # Ensure clean config directory and copy ENV file
-RUN rm -rf /root/.config/fabric && \
-    mkdir -p /root/.config/fabric
+RUN mkdir -p /root/.config/fabric
 COPY ENV /root/.config/fabric/.env
-
-# Add debug commands
-RUN ls -la /root/.config/fabric/
 
 # Expose port 8080
 EXPOSE 8080
 
-# Run the binary with debug output
+# Run the binary
 ENTRYPOINT ["/fabric"]
-CMD ["--serve"] 
+CMD ["--serve"]

@@ -14,6 +14,7 @@ func Serve(registry *core.PluginRegistry, address string) (err error) {
 
 	// Register routes
 	fabricDb := registry.Db
+	NewHealthHandler(r)
 	NewPatternsHandler(r, fabricDb.Patterns)
 	NewContextsHandler(r, fabricDb.Contexts)
 	NewSessionsHandler(r, fabricDb.Sessions)
